@@ -31,6 +31,7 @@ module GithubWebhook::Processor
 
   def authenticate_github_request!
     raise UnspecifiedWebhookSecretError.new unless respond_to?(:webhook_secret)
+    raise SignatureError, "None provided." unless signature_header
     secret = webhook_secret(json_body)
 
     expected_signature = "sha1=#{OpenSSL::HMAC.hexdigest(HMAC_DIGEST, secret, request_body)}"
